@@ -8,6 +8,9 @@ In terminal:
 
 `ollama list`
 
+see model CPU/GPU usage
+`ollama ps && ollama show qwen3-coder:30b` (FAILS)
+
 `df -h /`
 
 `du -sh ~/.ollama/models`
@@ -22,6 +25,13 @@ npm cache
 
 `ollama launch claude --config`
 
+Checking MEMORY
+`top -l 1 -o cpu -n 5 && echo "--- MEMORY ---" && top -l 1 -o mem -n 5 && echo "--- SWAP ---" && vm_stat | grep "Pageout"`
+`ps aux | grep ollama | grep -v grep`
+
+`ollama pull qwen2.5-coder:7b` (DUMB model)
+
+`ollama rm gemma3:4b` (DUMB model)
 
 
 <img width="997" height="567" alt="Screenshot 2026-02-07 at 4 27 20 PM" src="https://github.com/user-attachments/assets/8bc68884-73f6-4011-9dd3-1179422c04e2" />
@@ -44,5 +54,31 @@ npm cache
 
 
 
+(FOR ~16GB RAM)
+Check the parameter size (B): Multiplying the "B" number by 0.7 gives you the approximate GB of RAM it needs.
+7B x 0.7 = ~5 GB (Safe ✅)
+14B x 0.7 = ~10 GB (Risky/Slow ⚠️ - leaves only 6GB for macOS)
+30B x 0.7 = ~21 GB (Impossible ❌ - will freeze)
+
+
+Diagrammatic representation of flow =
+
+D3.js or recharts (web app)
+
+  A[User Input] --> B[State Update: handleQueryChange];                                                      
+    B --> C[Redux Store Update];                                                                               
+    C --> D[Dispatching Action: fetchData];                                                                    
+    D --> E[Axios API Call];                                                                                   
+    E --|{FETCH_DATA_SUCCESS}| F[Express Server Middleware];
+    E --|{FETCH_DATA_FAILURE}| G[Error Handling & Response];
+    F --> H[Data Fetching: MongoDB Query];
+    H --|{Success}| I[Data Processing & Sending];
+    H --|{Failure}| J[Error Handling & Response];
+    I --|{Success}| K[API Response Handling];
+    K --> L[Data Update & Display];
+    G --> K;
+    J --> K;
+    
+    <img width="1720" height="825" alt="Screenshot 2026-02-10 at 11 07 33 PM" src="https://github.com/user-attachments/assets/27810c48-d852-46a2-9346-36b26ffe5a69" />
 
 
