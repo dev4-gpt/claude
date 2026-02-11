@@ -78,7 +78,7 @@ D3.js or recharts (web app)
     K --> L[Data Update & Display];
     G --> K;
     J --> K;
-    
-    <img width="1720" height="825" alt="Screenshot 2026-02-10 at 11 07 33 PM" src="https://github.com/user-attachments/assets/27810c48-d852-46a2-9346-36b26ffe5a69" />
+
+https://app.eraser.io/workspace/icUk39WGeHzHH7gCtFKN?origin=share
 
 
