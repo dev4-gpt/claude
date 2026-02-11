@@ -65,20 +65,34 @@ Diagrammatic representation of flow =
 
 D3.js or recharts (web app)
 
-  A[User Input] --> B[State Update: handleQueryChange];                                                      
-    B --> C[Redux Store Update];                                                                               
-    C --> D[Dispatching Action: fetchData];                                                                    
-    D --> E[Axios API Call];                                                                                   
+  A[User Input] --> B[State Update: handleQueryChange];   
+  
+    B --> C[Redux Store Update];     
+    
+    C --> D[Dispatching Action: fetchData];   
+    
+    D --> E[Axios API Call];        
+    
     E --|{FETCH_DATA_SUCCESS}| F[Express Server Middleware];
+    
     E --|{FETCH_DATA_FAILURE}| G[Error Handling & Response];
+    
     F --> H[Data Fetching: MongoDB Query];
+    
     H --|{Success}| I[Data Processing & Sending];
+    
     H --|{Failure}| J[Error Handling & Response];
+    
     I --|{Success}| K[API Response Handling];
+    
     K --> L[Data Update & Display];
+    
     G --> K;
+    
     J --> K;
 
 https://app.eraser.io/workspace/icUk39WGeHzHH7gCtFKN?origin=share
+
+<img width="2310" height="2142" alt="diagram-export-2-10-2026-11_12_07-PM" src="https://github.com/user-attachments/assets/6955acc8-d2ec-44f9-bb9e-edc498748bac" />
 
 
