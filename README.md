@@ -95,11 +95,24 @@ https://app.eraser.io/workspace/icUk39WGeHzHH7gCtFKN?origin=share
 
 <img width="2310" height="2142" alt="diagram-export-2-10-2026-11_12_07-PM" src="https://github.com/user-attachments/assets/6955acc8-d2ec-44f9-bb9e-edc498748bac" />
 
+
 ## Claude Code 
 
 `/init` = memory; analyze codebase to understand what it should know every time running the code
 
 Claude.md = lint, memory
 
+
 <img width="775" height="333" alt="Screenshot 2026-02-11 at 1 55 23 PM" src="https://github.com/user-attachments/assets/9153bf91-9d56-4aea-9ce6-da661547a74d" />
+
+
+find . -name "*.json" -o -name "Makefile" -o -name "tox.ini" -o -name "pytest.ini" -o -name ".env*" 2>/dev/null  
+
+`/ide` = sets VScode connection with claude code in terminal; context of certain files and asking questions is possible
+
+`#` for setting memory in claude code [only with max or pro. not free models]
+
+Eg, "# always use uv to run the server and dont use pip directly"
+
+
 
