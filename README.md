@@ -113,6 +113,78 @@ find . -name "*.json" -o -name "Makefile" -o -name "tox.ini" -o -name "pytest.in
 `#` for setting memory in claude code [only with max or pro. not free models]
 
 Eg, "# always use uv to run the server and dont use pip directly"
+./CLAUDE.local.md = Project memory (local), 
+~/.claude/CLAUDE.md = user memory in, \project memory in ./CLAUDE.md . Add all three       
+  options in readme with code  
+
+`/help`
+`/memory`
+`/mcp`
+`/agents`
+`/clear` = clear context window and start fresh
+`/compact` = clear the history but keep a summary
 
 
+<img width="638" height="393" alt="Screenshot 2026-02-12 at 2 42 19 PM" src="https://github.com/user-attachments/assets/c72280e3-c516-447a-8df9-0b9e0faa36f2" />
 
+<img width="646" height="220" alt="Screenshot 2026-02-12 at 2 43 38 PM" src="https://github.com/user-attachments/assets/1981afff-e957-4d8f-acd4-4a607ec0d0de" />
+
+PLAN MODE = SHIFT+TAB*2
+ACCEPT EDITS = SHIFT+TAB
+
+Eg, The chat interface displays query responses with source citations. I need to modify it so each source        
+  becomes a clickable link that opens the corresponding lesson video in a new tab: - When courses are          
+  processed into chunks in @backend/document_processor.py, the link of each lesson is stored in the course     
+   catalog collection; - modify _format_results in @backend/search_tools.py so that the lesson links are       
+  also returned; - the links should be embedded invisibly (no visible URL text) 
+
+
+## .vscode 
+
+`settings.json`
+{
+    "python.analysis.typeCheckingMode": "basic"
+}
+
+## Push to Github from CLI
+
+`git add .`
+
+`git commit -m "..."`
+
+`git push origin main`
+
+
+## MCP Tool call to claude code
+
+gain additional functionality to external sources and systems
+
+eg, Playwright
+`claude mcp add name_of_mcp underlying_command_to_start_mcp`
+`claude mcp remove name_of_mcp`
+
+name_of_mcp = playwright
+underlying_command_to_start_mcp = npx @playwright/mcp@latest
+
+## Claude Code prompt for frontend= 
+
+"using the playwright mcp server visit *site_we_are_at* and view the new chat button. I want that button to look the same as the other links below for Courses and Try asking. Make sure that it is left aligned and that the border is removed."
+
+site_we_are_at = http://127.0.0.1:8000/
+
+
+NOTE: Models like mistral-nemo:latest and qwen2.5-coder:7b failed to work with tools like /mcp and follow simple guidelines like making a flowchart, or accessing multiple folders like @frontend and @backend. Would suggest get an ANTHROPIC_API_KEY.
+
+## Claude Code prompt for frontend
+
+"In @backend/search_tools.py, add a second tool alongside the existing content related tool. This new tool should handle course outline queries - 
+1. functionality:
+   a. input:course title,
+   b. output:course title, course link, and complete lesson list,
+   c. For each lesson, add lesson number and lesson title.
+
+2. Data source : course metadata collection of the vector store.
+
+3. Update the system prompt in @backend/ai_generator so that the course title, course link, the number and the title of each lesson are all returned to address and outline related queries.
+
+4. Make sure that the new tool is registered in the system."
