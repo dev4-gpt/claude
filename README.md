@@ -280,10 +280,82 @@ and create development scripts for running quality checks.
 
 Claude Code (running mistral-nemo via Ollama) created three worktrees but failed to make any actual changes — all three branches were identical to main. 
 We verified that:
-`# Check each worktree has zero changes vs main
+
+```
+# Check each worktree has zero changes vs main
 git -C .trees/quality_feature diff main --stat    # → empty
 git -C .trees/testing_feature diff main --stat     # → empty
-git -C .trees/ui_feature diff main --stat          # → empty`
+git -C .trees/ui_feature diff main --stat          # → empty
+```
+
+## Phase 2: Implement Features (VSCode)
+
+- quality_feature — Ruff linter + pre-commit hooks
+
+`cd .trees/quality_feature/`
+```
+cd .trees/quality_feature
+chmod +x scripts/*.sh
+git add -A
+git commit -m "feat: add ruff linter, pre-commit hooks, and modernized quality scripts"
+```
+
+- testing_feature — New test suites + coverage config
+
+`cd .trees/testing_feature/`
+```
+cd .trees/testing_feature
+chmod +x scripts/*.sh
+git add -A
+git commit -m "feat: add session manager and document processor test suites"
+```
+
+- ui_feature — System theme detection + light theme + accessibility
+
+`cd .trees/ui_feature/`
+```
+cd .trees/ui_feature
+git add -A
+git commit -m "feat: auto-detect system theme and improve toggle accessibility"
+
+# (after adding light theme refinements)
+git add -A
+git commit -m "feat: refined light theme with full color palette and element overrides"
+```
+
+## Phase 3: Protect main from worktree accidents 
+
+```
+# Add .trees/ to .gitignore so it never happens again
+echo -e "\n# Git worktrees\n.trees/" >> .gitignore
+git add .gitignore
+git commit -m "gitignore .trees"
+git push origin main
+```
+
+## Phase 4: Merge all branches to main 
+
+```
+cd ~/…/ragchatbot-codebase     # main repo root
+git checkout main              # make sure we're on main
+
+# Merge 1 — clean
+git merge quality_feature --no-edit
+
+# Merge 2 — had a conflict in pyproject.toml
+git merge testing_feature --no-edit
+# → CONFLICT: both branches added different deps to [dependency-groups] dev
+# → Resolved: kept ruff + pre-commit AND pytest-cov
+git add pyproject.toml
+git commit --no-edit
+
+# Merge 3 — clean
+git merge ui_feature --no-edit
+```
+
+## Phase 5: Merge
+
+`git push origin main`
 
 `git push origin quality_feature`
 
@@ -291,3 +363,138 @@ git -C .trees/ui_feature diff main --stat          # → empty`
 
 `git push origin ui_feature`
 
+
+## Exploring Github integrations
+
+`claude --resume` = Anthropic API
+`ollama launch claude --config` = Open source 
+
+The .trees folders are redundant. 
+They're copies of code that already lives on main. Keeping them means:
+
+- 3 extra copies of the entire codebase sitting on disk (~3x the space)
+- Confusion: you might accidentally edit code in quality_feature thinking it's the real codebase
+- Git weirdness: as you already saw with the embedded repo warning when you ran git add .
+- Think of it like scaffolding on a building: useful during construction, removed once the building is done.
+
+If you ever need a branch again
+You don't lose anything by deleting the worktrees. 
+The branches still exist:
+
+- all branches are still there
+`git branch -a`
+
+- you can switch to any branch anytime:
+
+`git checkout ui_feature`
+
+`git checkout testing_feature`
+
+`git checkout quality_feature`
+
+- Remove each worktree properly (deletes folder and unregisters from git):
+```
+git worktree remove .trees/quality_feature
+git worktree remove .trees/testing_feature
+git worktree remove .trees/ui_feature
+```
+
+- Remove leftover empoty directories
+
+`rmdir .trees`
+
+- Push
+
+
+## Github authentication on Claude code
+
+- in terminal
+
+`brew install gh`
+
+`gh auth login`
+
+  - use Github.com
+  - preferred protocol = `HTTPS`
+  - Authenticate with = Web OR Authenticator app
+
+- Verfiy it worked
+
+`gh auth status`
+
+- Go back to Claude Code and retry
+
+`claude --resume` = if Anthropic API
+
+`ollama launch claude --config` = if Open Source
+
+`/install-github-app`
+
+- Claude Github SDK allows us to use Claude code outside of terminal interface. Install, configure, and connect to Github account.
+
+<img width="998" height="146" alt="Screenshot 2026-02-14 at 2 13 55 PM" src="https://github.com/user-attachments/assets/e10f3794-8a96-4890-942e-4ca5b8040890" />
+
+PR = pull requests
+
+- Open a Pull Request that enables bug fixes, writing tests, code reviews
+
+Description = 
+
+```
+## 🤖 Installing Claude Code GitHub App
+
+This PR adds a GitHub Actions workflow that enables Claude Code integration in our repository.
+
+### What is Claude Code?
+
+[Claude Code](https://claude.com/claude-code) is an AI coding agent that can help with:
+- Bug fixes and improvements  
+- Documentation updates
+- Implementing new features
+- Code reviews and suggestions
+- Writing tests
+- And more!
+
+### How it works
+
+Once this PR is merged, we'll be able to interact with Claude by mentioning @claude in a pull request or issue comment.
+Once the workflow is triggered, Claude will analyze the comment and surrounding context, and execute on the request in a GitHub action.
+
+### Important Notes
+
+- **This workflow won't take effect until this PR is merged**
+- **@claude mentions won't work until after the merge is complete**
+- The workflow runs automatically whenever Claude is mentioned in PR or issue comments
+- Claude gets access to the entire PR or issue context including files, diffs, and previous comments
+
+### Security
+
+- Our Anthropic API key is securely stored as a GitHub Actions secret
+- Only users with write access to the repository can trigger the workflow
+- All Claude runs are stored in the GitHub Actions run history
+- Claude's default tools are limited to reading/writing files and interacting with our repo by creating comments, branches, and commits.
+- We can add more allowed tools by adding them to the workflow file like:
+
+`
+allowed_tools: Bash(npm install),Bash(npm run build),Bash(npm run lint),Bash(npm run test)
+`
+
+There's more information in the [Claude Code action repo](https://github.com/anthropics/claude-code-action).
+
+After merging this PR, let's try mentioning @claude in a comment on any PR to get started!
+```
+
+<img width="439" height="200" alt="Screenshot 2026-02-14 at 2 18 41 PM" src="https://github.com/user-attachments/assets/c516ac19-e6b4-4102-be73-e65e283d6454" />
+
+
+<img width="693" height="296" alt="Screenshot 2026-02-14 at 2 18 58 PM" src="https://github.com/user-attachments/assets/d88bfb85-bf2b-4131-87c7-101ce9e4dd69" />
+
+- We have created one YAML file for Clude to operate, and one for code reviews (filter by authors, specify where its running on)
+
+Check in `Files changed` tab after PR
+
+- Modify on code reviews
+
+- Constantly editable, tracked on git
+
+- Lets merge
