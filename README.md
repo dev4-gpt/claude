@@ -188,3 +188,106 @@ NOTE: Models like mistral-nemo:latest and qwen2.5-coder:7b failed to work with t
 3. Update the system prompt in @backend/ai_generator so that the course title, course link, the number and the title of each lesson are all returned to address and outline related queries.
 
 4. Make sure that the new tool is registered in the system."
+
+
+## Testing and Debugging
+
+(Shift+Tab)*2 for plan mode
+"Think a lot" = extended thinking mode in Claude
+
+Prompt = 
+"The RAG chatbot returns query failed for any content related questions. I need you to:
+1. write tests to evaluate the outputs of the execute method of the course search tool in @backend/search_tools.py
+2. Write tests to evaluate if @backend/ai_generator.py correctly calls for the CourseSearchTool
+3. Write tests to evaluate how the RAG system is handling the content query related questions.
+
+Save the tests in a test folder within at backend. Run those tests against the current system to identify which components are failing. proposed fixes based on what the test reveal is broken. Think a lot."
+
+
+## Working on many features in parallel and ensuring we dont duplicate
+
+Make your own custom command= 
+
+- create implement-feature.md
+- if arguments to pass to custom command use `$`. eg, `$ARGUMENTS`
+- something applied to every instamce = use CLAUDE.md
+- use specific commands that you may or may not use across different conversations
+
+`/permissions` on Claude code CLI
+OR 
+settings.local.json = set permissions and deny
+
+
+## Worktrees
+
+Work in parallel with claude code
+
+- create copies of the codebase
+- operate in isolation
+- merge them together
+
+`mkdir .trees`
+
+`git worktree add folder/name_of_worktree`
+
+create ui feature, testing feature and quality feature 
+- git worktree add .trees/ui_feature
+- git worktree add .trees/testing_feature
+- git worktree add .trees/quality_feature
+
+
+- open claude for each env
+- run claude code in parallel
+- ensures that if same files are modified, we dont overwrite 
+- fix that when merging trees
+
+WINDOW 1 = UI FEATURE
+```
+/implement-feature Toggle button design 
+- Create a toggle button that fits the existing design aesthetic.  
+- Position it in the top right.
+- Use an icon based design (Sun/moon icons or similar)
+- Smooth transition animation when toggling.
+- Button should be accessible and keyboard navigable.
+```
+
+WINDOW 2 = TESTING FEATURE
+```
+Enhance the existing testing framework for the RAG system in @backend/tests.
+The current tests cover unit components but are missing essential API testing infrastructure:
+
+1. API Endpoint tests                                     
+2. Test the fast API endpoints (/api/query, /api/courses, /) for proper request/response handling     
+3. PyTest configuration                                   
+4. Add pytest.ini_options in pyproject.toml for cleaner test execution.            5. Test fixtures                                          
+6. create conftest.py with shared fixtures for mocking and test data setup.
+The fast app in @backend/app.py mounts static files       
+that don't exist in the test environment.                 
+Either create a separate test app or define the API       
+endpoints in line in the test file to avoid import issues.       
+```
+
+WINDOW 3 = QUALITY FEATURE
+```
+Add essential code quality tools to the development 
+workflow. Set up black for automatic code formatting.
+Add proper formatting consistency throughout the code base
+and create development scripts for running quality checks.
+```
+
+
+## Phase 1: Worktrees Already Existed (created by Claude Code)
+
+Claude Code (running mistral-nemo via Ollama) created three worktrees but failed to make any actual changes — all three branches were identical to main. 
+We verified that:
+`# Check each worktree has zero changes vs main
+git -C .trees/quality_feature diff main --stat    # → empty
+git -C .trees/testing_feature diff main --stat     # → empty
+git -C .trees/ui_feature diff main --stat          # → empty`
+
+`git push origin quality_feature`
+
+`git push origin testing_feature`
+
+`git push origin ui_feature`
+
